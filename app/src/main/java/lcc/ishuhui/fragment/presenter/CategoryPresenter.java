@@ -26,7 +26,6 @@ public class CategoryPresenter {
                 .addParam("ClassifyId", classifyId)
                 .addParam("PageIndex", pageIndex + "")
                 .url(API.GET_BOOK_BY_PARAM)
-                .tag(this)
                 .build()
                 .execute(new HttpCallBack<BookModel>() {
                     @Override

@@ -152,6 +152,7 @@ public class StateLayout extends FrameLayout{
 
         if(toBeShown != null)
         {
+            currentShowingView = toBeShown;
             toBeShown.animate()
                     .scaleX(1)
                     .scaleY(1)
@@ -160,7 +161,6 @@ public class StateLayout extends FrameLayout{
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     toBeShown.setVisibility(VISIBLE);
-                    currentShowingView = toBeShown;
                 }
             });
         }

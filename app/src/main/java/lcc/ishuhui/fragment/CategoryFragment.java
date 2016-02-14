@@ -12,7 +12,6 @@ import lcc.ishuhui.customview.Recycler.NiceAdapter;
 import lcc.ishuhui.customview.Recycler.StateRecyclerView;
 import lcc.ishuhui.fragment.IView.IView;
 import lcc.ishuhui.fragment.presenter.CategoryPresenter;
-import lcc.ishuhui.http.HttpUtil;
 import lcc.ishuhui.model.BookModel;
 import okhttp3.Call;
 
@@ -114,11 +113,6 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel>{
         getData();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        HttpUtil.getInstance().cancelByTag(presenter);
-    }
 
     private void getData() {
         presenter.getData(classifyId,PageIndex);

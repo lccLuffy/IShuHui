@@ -67,6 +67,8 @@ public class DefaultEventDelegate implements NiceAdapter.EventDelegate{
     public void onDataChanged(int offset) {
         if(niceAdapter.isDataEmpty())
             footer.hide();
+        else
+            footer.show();
     }
 
 
@@ -143,20 +145,19 @@ public class DefaultEventDelegate implements NiceAdapter.EventDelegate{
         {
             if (view!=null)
             {
-                if (container.getVisibility() != View.VISIBLE)
-                    container.setVisibility(View.VISIBLE);
+                show();
                 if (view.getParent()==null)
                     container.addView(view);
 
                 for (int i = 0; i < container.getChildCount(); i++)
                 {
-                    if (container.getChildAt(i) == view)view.setVisibility(View.VISIBLE);
+                    if (container.getChildAt(i) == view) view.setVisibility(View.VISIBLE);
                     else container.getChildAt(i).setVisibility(View.GONE);
                 }
             }
             else
             {
-                container.setVisibility(View.GONE);
+                hide();
             }
         }
 
@@ -175,8 +176,13 @@ public class DefaultEventDelegate implements NiceAdapter.EventDelegate{
 
         public void hide()
         {
-            container.setVisibility(View.GONE);
+            if(container.getVisibility() != View.GONE)
+                container.setVisibility(View.GONE);
         }
 
+        public void show() {
+            if(container.getVisibility() != View.VISIBLE)
+                container.setVisibility(View.VISIBLE);
+        }
     }
 }
