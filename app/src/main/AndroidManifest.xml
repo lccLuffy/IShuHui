@@ -32,7 +32,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.WebActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
         <activity
             android:name=".activity.WelcomeActivity"
             android:theme="@style/AppTheme.NoActionBar" />

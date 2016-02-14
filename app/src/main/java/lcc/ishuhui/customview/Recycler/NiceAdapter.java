@@ -348,7 +348,6 @@ public abstract class NiceAdapter<T> extends RecyclerView.Adapter<NiceViewHolder
             {
                 return maxSpan;
             }
-
             return 1;
         }
     }

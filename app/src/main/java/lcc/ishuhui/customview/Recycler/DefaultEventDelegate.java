@@ -34,6 +34,7 @@ public class DefaultEventDelegate implements NiceAdapter.EventDelegate{
     {
         this.niceAdapter = niceAdapter;
         footer = new FooterView(niceAdapter.getContext());
+        footer.hide();
         niceAdapter.addFooterView(footer);
     }
 
@@ -64,7 +65,8 @@ public class DefaultEventDelegate implements NiceAdapter.EventDelegate{
 
     @Override
     public void onDataChanged(int offset) {
-
+        if(niceAdapter.isDataEmpty())
+            footer.hide();
     }
 
 
@@ -169,6 +171,11 @@ public class DefaultEventDelegate implements NiceAdapter.EventDelegate{
         public void showNoMoreView(){
             showView(noMoreView);
             state = IS_SHOW_NO_MORE_VIEW;
+        }
+
+        public void hide()
+        {
+            container.setVisibility(View.GONE);
         }
 
     }

@@ -1,5 +1,7 @@
 package lcc.ishuhui.customview;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -107,6 +109,7 @@ public class StateLayout extends FrameLayout{
 
     }
 
+
     private LayoutParams obtainLayoutParams()
     {
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -114,6 +117,7 @@ public class StateLayout extends FrameLayout{
         layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
         return layoutParams;
     }
+
 
     private void initInnerView(LinearLayout innerView)
     {
@@ -133,13 +137,32 @@ public class StateLayout extends FrameLayout{
 
         if(toBeHided != null)
         {
-            toBeHided.setVisibility(GONE);
+            toBeHided.animate()
+                    .scaleX(0)
+                    .scaleY(0)
+                    .alpha(0)
+                    .setDuration(200).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    toBeHided.setVisibility(GONE);
+                }
+            });
+
         }
 
         if(toBeShown != null)
         {
-            toBeShown.setVisibility(VISIBLE);
-            currentShowingView = toBeShown;
+            toBeShown.animate()
+                    .scaleX(1)
+                    .scaleY(1)
+                    .alpha(1)
+                    .setDuration(200).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    toBeShown.setVisibility(VISIBLE);
+                    currentShowingView = toBeShown;
+                }
+            });
         }
     }
 

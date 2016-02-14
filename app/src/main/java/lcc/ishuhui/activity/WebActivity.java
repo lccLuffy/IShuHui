@@ -4,20 +4,30 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.JsResult;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import butterknife.Bind;
 import lcc.ishuhui.R;
+import lcc.ishuhui.customview.StateLayout;
 
 public class WebActivity extends BaseActivity {
 
@@ -25,8 +35,11 @@ public class WebActivity extends BaseActivity {
     public static final String TITLE = "TITLE";
 
     String mUrl, title;
-    @Bind(R.id.webView)
+
     WebView webView;
+
+    @Bind(R.id.stateLayout)
+    StateLayout stateLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,67 +51,69 @@ public class WebActivity extends BaseActivity {
         final DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-        setTitle(title);
+
+        webView = new WebView(this);
+        webView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        stateLayout.addContentView(webView);
+
+
+
+        stateLayout.setErrorAction("重试", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                webView.reload();
+            }
+        });
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAppCacheEnabled(true);
         webSettings.setLoadWithOverviewMode(true);
-        webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setDisplayZoomControls(false);
         webSettings.setDomStorageEnabled(true);
         webView.setWebChromeClient(new ChromeClient());
         webView.setWebViewClient(new ViewClient());
+
+        webView.clearHistory();
         webView.loadUrl(mUrl);
+        webView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getPointerCount() == 1)
+                {
+                    if(event.getAction() == MotionEvent.ACTION_DOWN)
+                    {
+                        touchTime = System.currentTimeMillis();
+                    }
+                    else if(event.getAction() == MotionEvent.ACTION_UP)
+                    {
+                        if(System.currentTimeMillis() - touchTime < 50)
+                        {
+                            onWebViewClick();
+                        }
+                    }
+                }
+
+                return false;
+            }
+        });
     }
 
+    private void onWebViewClick()
+    {
+        
+    }
+
+    private long touchTime = 0;
     @Override
     public int getLayoutId() {
         return R.layout.activity_web;
     }
 
 
-    private class ChromeClient extends WebChromeClient {
-        @Override
-        public void onReceivedTitle(WebView view, String title) {
-            super.onReceivedTitle(view, title);
-        }
 
-        @Override
-        public void onProgressChanged(WebView view, int newProgress) {
-            super.onProgressChanged(view, newProgress);
-            toast("已经加载"+newProgress+"%");
-        }
-
-        @Override
-        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(WebActivity.this);
-            builder.setTitle("温馨提示");
-            builder.setMessage(message)
-                    .show();
-            return true;
-        }
-
-        @Override
-        public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(WebActivity.this);
-            builder.setMessage(message)
-                    .setTitle("提示")
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            result.confirm();
-                        }
-                    })
-            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    result.cancel();
-                }
-            }).show();
-            return true;
-        }
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_web,menu);
@@ -137,13 +152,88 @@ public class WebActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    private class ChromeClient extends WebChromeClient {
+        @Override
+        public void onReceivedTitle(WebView view, String title) {
+            super.onReceivedTitle(view, title);
+        }
+
+
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            super.onProgressChanged(view, newProgress);
+            if(newProgress == 100)
+            {
+                stateLayout.showContentView();
+            }
+        }
+
+        @Override
+        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(WebActivity.this);
+            builder.setTitle("温馨提示");
+            builder.setMessage(message)
+                    .show();
+            return true;
+        }
+
+        @Override
+        public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(WebActivity.this);
+            builder.setMessage(message)
+                    .setTitle("提示")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            result.confirm();
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            result.cancel();
+                        }
+                    }).show();
+            return true;
+        }
+    }
+
     private class ViewClient extends WebViewClient
     {
         @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url)
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+            stateLayout.showProgressView();
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            stateLayout.showContentView();
+        }
+
+        @Override
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+            super.onReceivedError(view, request, error);
+            errorHappen();
+        }
+
+        @Override
+        public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+            super.onReceivedHttpError(view, request, errorResponse);
+            errorHappen();
+        }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            super.onReceivedSslError(view, handler, error);
+            errorHappen();
+        }
+
+        private void errorHappen()
         {
-            view.loadUrl(url);
-            return true;
+            stateLayout.showErrorView();
         }
     }
 }
