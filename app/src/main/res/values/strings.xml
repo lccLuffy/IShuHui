@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">漫画</string>
+    <string name="action_settings">设置</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">邮箱</string>
+    <string name="prompt_password">密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">无效的邮箱</string>
+    <string name="error_invalid_password">密码太短</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">此字段是必须的</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="copy">复制</string>
+    <string name="share_link">分享链接</string>
+    <string name="exit">退出</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="subscribe">订阅</string>
+    <string name="open_bower">用浏览器打开</string>
+    <string name="refresh">刷新</string>
+    <string name="picture">图片</string>
+
+</resources>
