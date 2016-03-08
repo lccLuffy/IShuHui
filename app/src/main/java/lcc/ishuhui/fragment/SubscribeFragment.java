@@ -106,13 +106,15 @@ public class SubscribeFragment extends BaseFragment {
         }
         else
         {
+
+            stateRecyclerView.showEmptyView("您还没有登录");
             stateRecyclerView.setEmptyAction("登录", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(getActivity(),LoginActivity.class));
+                    toast("您还没有登录");
+                    getActivity().startActivity(new Intent(getActivity(),LoginActivity.class));
                 }
             });
-            stateRecyclerView.showEmptyView("您还没有登录");
         }
     }
 

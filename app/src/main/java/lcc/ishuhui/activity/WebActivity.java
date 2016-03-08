@@ -9,12 +9,9 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
@@ -50,8 +47,7 @@ public class WebActivity extends BaseActivity {
         mUrl = getIntent().getStringExtra(URL);
         title = getIntent().getStringExtra(TITLE);
 
-        final DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
+
         stateLayout.setErrorAction("重试", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,35 +67,9 @@ public class WebActivity extends BaseActivity {
 
         webView.clearHistory();
         webView.loadUrl(mUrl);
-        webView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getPointerCount() == 1)
-                {
-                    if(event.getAction() == MotionEvent.ACTION_DOWN)
-                    {
-                        touchTime = System.currentTimeMillis();
-                    }
-                    else if(event.getAction() == MotionEvent.ACTION_UP)
-                    {
-                        if(System.currentTimeMillis() - touchTime < 50)
-                        {
-                            onWebViewClick();
-                        }
-                    }
-                }
 
-                return false;
-            }
-        });
     }
 
-    private void onWebViewClick()
-    {
-        
-    }
-
-    private long touchTime = 0;
     @Override
     public int getLayoutId() {
         return R.layout.activity_web;
@@ -149,9 +119,8 @@ public class WebActivity extends BaseActivity {
         @Override
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
+            setTitle(title);
         }
-
-
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
@@ -170,7 +139,6 @@ public class WebActivity extends BaseActivity {
                     .show();
             return true;
         }
-
         @Override
         public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
             AlertDialog.Builder builder = new AlertDialog.Builder(WebActivity.this);

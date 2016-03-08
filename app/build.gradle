@@ -42,7 +42,7 @@ dependencies {
      * My own library
      */
     /** *************************************************************/
-    compile 'com.lcc.luffy:state-refresh-recyclerview:1.0.3'
+    compile 'com.lcc.luffy:state-refresh-recyclerview:1.0.7'
     /**
      * removeable
      */
