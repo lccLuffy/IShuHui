@@ -8,13 +8,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.lcc.state_refresh_recyclerview.Recycler.NiceAdapter;
+import com.lcc.state_refresh_recyclerview.Recycler.NiceViewHolder;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import lcc.ishuhui.R;
 import lcc.ishuhui.activity.ChapterListActivity;
-import lcc.ishuhui.customview.Recycler.NiceAdapter;
-import lcc.ishuhui.customview.Recycler.NiceViewHolder;
 import lcc.ishuhui.customview.tagview.TagImageView;
 import lcc.ishuhui.model.BookModel;
 import lcc.ishuhui.utils.PreferencesUtil;

@@ -10,10 +10,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.lcc.state_refresh_recyclerview.StateLayout;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import lcc.ishuhui.R;
-import lcc.ishuhui.customview.StateLayout;
 
 /**
  * Created by lcc_luffy on 2016/1/30.
@@ -33,7 +34,7 @@ public class Test extends AppCompatActivity {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
         imageView.setLayoutParams(layoutParams);
-        stateLayout.addContentView(imageView);
+        stateLayout.addView(imageView);
 
     }
     @Override

@@ -13,13 +13,13 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.lcc.state_refresh_recyclerview.Recycler.LoadMoreFooter;
+import com.lcc.state_refresh_recyclerview.Recycler.StateRecyclerView;
 
 import butterknife.Bind;
 import lcc.ishuhui.R;
 import lcc.ishuhui.adapter.ChapterListAdapter;
 import lcc.ishuhui.constants.API;
-import lcc.ishuhui.customview.Recycler.NiceAdapter;
-import lcc.ishuhui.customview.Recycler.StateRecyclerView;
 import lcc.ishuhui.http.HttpUtil;
 import lcc.ishuhui.http.callback.HttpCallBack;
 import lcc.ishuhui.http.callback.StringHttpCallBack;
@@ -50,6 +50,7 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
     private int PageIndex = 0;
     private String id, title;
 
+    LoadMoreFooter loadMoreFooter;
 
     private boolean isSubscribed = false;
     @Override
@@ -70,7 +71,7 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
 
     private void init() {
         chapterListAdapter = new ChapterListAdapter(this);
-
+        loadMoreFooter = chapterListAdapter.getLoadMoreFooter();
         int spanCount = 2;
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), spanCount);
         gridLayoutManager.setSpanSizeLookup(chapterListAdapter.obtainGridSpanSizeLookUp(spanCount));
@@ -82,13 +83,13 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
         stateRecyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                chapterListAdapter.showLoadMoreView();
+                loadMoreFooter.showLoadMoreView();
                 PageIndex = 0;
                 getData();
             }
         });
 
-        chapterListAdapter.setOnLoadMoreListener(new NiceAdapter.OnLoadMoreListener() {
+        loadMoreFooter.setOnLoadMoreListener(new LoadMoreFooter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
                 ++PageIndex;
@@ -122,7 +123,7 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
                     public void onSuccess(Call call, ChapterListModel result) {
                         if (result.Return.List.isEmpty())
                         {
-                            chapterListAdapter.showNoMoreView();
+                            loadMoreFooter.showNoMoreView();
                         }
                         else
                         {

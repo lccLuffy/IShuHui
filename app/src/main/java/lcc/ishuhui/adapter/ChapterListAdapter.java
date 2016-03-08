@@ -9,20 +9,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.lcc.state_refresh_recyclerview.Recycler.NiceAdapter;
+import com.lcc.state_refresh_recyclerview.Recycler.NiceViewHolder;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import lcc.ishuhui.R;
 import lcc.ishuhui.activity.WebActivity;
-import lcc.ishuhui.customview.Recycler.NiceAdapter;
-import lcc.ishuhui.customview.Recycler.NiceViewHolder;
-import lcc.ishuhui.model.ChapterListModel;
 import lcc.ishuhui.constants.API;
+import lcc.ishuhui.model.ChapterListModel;
 
 /**
  * Created by lcc_luffy on 2016/1/23.
  */
-public class ChapterListAdapter extends NiceAdapter<ChapterListModel.ReturnEntity.Chapter>{
+public class ChapterListAdapter extends NiceAdapter<ChapterListModel.ReturnEntity.Chapter> {
 
     public ChapterListAdapter(final Context context) {
         super(context);

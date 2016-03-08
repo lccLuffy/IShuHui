@@ -4,12 +4,13 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
+import com.lcc.state_refresh_recyclerview.Recycler.LoadMoreFooter;
+import com.lcc.state_refresh_recyclerview.Recycler.StateRecyclerView;
+
 import butterknife.Bind;
 import lcc.ishuhui.R;
 import lcc.ishuhui.adapter.PictureAdapter;
 import lcc.ishuhui.constants.Gank;
-import lcc.ishuhui.customview.Recycler.NiceAdapter;
-import lcc.ishuhui.customview.Recycler.StateRecyclerView;
 import lcc.ishuhui.http.HttpUtil;
 import lcc.ishuhui.http.callback.HttpCallBack;
 import lcc.ishuhui.model.PictureModel;
@@ -24,6 +25,7 @@ public class PicturesActivity extends BaseActivity {
 
     PictureAdapter pictureAdapter;
 
+    LoadMoreFooter loadMoreFooter;
     private int page = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +41,7 @@ public class PicturesActivity extends BaseActivity {
                 .execute(new HttpCallBack<PictureModel>() {
                     @Override
                     public void onFailure(Call call, Exception e) {
-                        if (pictureAdapter.isDataEmpty()) {
-                            stateRecyclerView.showErrorView();
-                        } else {
-                            pictureAdapter.showErrorView();
-                        }
+                        loadMoreFooter.showErrorView();
                     }
 
                     @Override
@@ -66,7 +64,7 @@ public class PicturesActivity extends BaseActivity {
                         }
                         else
                         {
-                            pictureAdapter.showNoMoreView();
+                            loadMoreFooter.showNoMoreView();
                             if(pictureAdapter.isDataEmpty())
                             {
                                 stateRecyclerView.showEmptyView();
@@ -82,17 +80,17 @@ public class PicturesActivity extends BaseActivity {
         stateRecyclerView.setLayoutManager(layoutManager);
 
         stateRecyclerView.setAdapter(pictureAdapter = new PictureAdapter(this),true);
-
+        loadMoreFooter = pictureAdapter.getLoadMoreFooter();
         stateRecyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 page = 1;
-                pictureAdapter.showLoadMoreView();
+                loadMoreFooter.showLoadMoreView();
                 getData();
             }
         });
 
-        pictureAdapter.setOnLoadMoreListener(new NiceAdapter.OnLoadMoreListener() {
+        loadMoreFooter.setOnLoadMoreListener(new LoadMoreFooter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
                 page++;

@@ -21,7 +21,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        rootView = LayoutInflater.from(context).inflate(getLayoutId(), null);
+        rootView = LayoutInflater.from(getContext()).inflate(getLayoutId(), null);
         ButterKnife.bind(this, rootView);
         initialize(savedInstanceState);
     }

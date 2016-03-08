@@ -6,12 +6,13 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
+import com.lcc.state_refresh_recyclerview.Recycler.StateRecyclerView;
+
 import butterknife.Bind;
 import lcc.ishuhui.R;
 import lcc.ishuhui.activity.LoginActivity;
 import lcc.ishuhui.adapter.SubscribeAdapter;
 import lcc.ishuhui.constants.API;
-import lcc.ishuhui.customview.Recycler.StateRecyclerView;
 import lcc.ishuhui.http.HttpUtil;
 import lcc.ishuhui.http.callback.HttpCallBack;
 import lcc.ishuhui.model.BookModel;
@@ -22,10 +23,8 @@ import okhttp3.Response;
 
 public class SubscribeFragment extends BaseFragment {
 
-    public static final String ID = "SubscribeFragment";
     @Bind(R.id.stateRecyclerView)
     StateRecyclerView stateRecyclerView;
-
 
     SubscribeAdapter subscribeAdapter;
 
@@ -57,7 +56,7 @@ public class SubscribeFragment extends BaseFragment {
             }
         });
 
-        subscribeAdapter.showNoMoreView();
+        subscribeAdapter.getLoadMoreFooter().showNoMoreView();
     }
 
     @Override
@@ -81,7 +80,7 @@ public class SubscribeFragment extends BaseFragment {
                                 toast(e.toString());
                             } else
                             {
-                                subscribeAdapter.showErrorView();
+                                subscribeAdapter.getLoadMoreFooter().showErrorView();
                             }
                         }
 

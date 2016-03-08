@@ -9,19 +9,19 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.lcc.state_refresh_recyclerview.Recycler.NiceAdapter;
+import com.lcc.state_refresh_recyclerview.Recycler.NiceViewHolder;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import lcc.ishuhui.R;
 import lcc.ishuhui.activity.PictureActivity;
-import lcc.ishuhui.customview.Recycler.NiceAdapter;
-import lcc.ishuhui.customview.Recycler.NiceViewHolder;
 import lcc.ishuhui.model.PictureModel;
 
 /**
  * Created by lcc_luffy on 2016/2/13.
  */
-public class PictureAdapter extends NiceAdapter<PictureModel.ResultsEntity>{
+public class PictureAdapter extends NiceAdapter<PictureModel.ResultsEntity> {
     LayoutInflater inflater;
     public PictureAdapter(final Context context) {
         super(context);

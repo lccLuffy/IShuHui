@@ -4,11 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <lcc.ishuhui.customview.Recycler.StateRecyclerView
+    <com.lcc.state_refresh_recyclerview.StateLayout
         android:id="@+id/stateRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingEnd="3dp"
-        android:paddingStart="3dp" />
-
+        android:layout_height="match_parent" />
 </RelativeLayout>

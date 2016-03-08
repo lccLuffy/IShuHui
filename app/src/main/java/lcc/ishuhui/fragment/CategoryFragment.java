@@ -5,11 +5,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
+import com.lcc.state_refresh_recyclerview.Recycler.LoadMoreFooter;
+import com.lcc.state_refresh_recyclerview.Recycler.StateRecyclerView;
+
 import butterknife.Bind;
 import lcc.ishuhui.R;
 import lcc.ishuhui.adapter.BookAdapter;
-import lcc.ishuhui.customview.Recycler.NiceAdapter;
-import lcc.ishuhui.customview.Recycler.StateRecyclerView;
 import lcc.ishuhui.fragment.IView.IView;
 import lcc.ishuhui.fragment.presenter.CategoryPresenter;
 import lcc.ishuhui.model.BookModel;
@@ -30,6 +31,7 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel>{
 
     CategoryPresenter presenter;
 
+    LoadMoreFooter loadMoreFooter;
 
     BookAdapter bookAdapter;
 
@@ -79,10 +81,11 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel>{
         presenter = new CategoryPresenter(this);
         niceRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         niceRecyclerView.setAdapter(bookAdapter = new BookAdapter(getContext()), true);
+        loadMoreFooter = bookAdapter.getLoadMoreFooter();
         niceRecyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                bookAdapter.showLoadMoreView();
+                loadMoreFooter.showLoadMoreView();
                 prevPage = PageIndex;
                 PageIndex = 0;
                 if(bookAdapter.isDataEmpty())
@@ -93,7 +96,7 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel>{
             }
         });
 
-        bookAdapter.setOnLoadMoreListener(new NiceAdapter.OnLoadMoreListener() {
+        loadMoreFooter.setOnLoadMoreListener(new LoadMoreFooter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
                 prevPage = PageIndex;
@@ -101,10 +104,10 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel>{
                 getData();
             }
         });
-        bookAdapter.setOnErrorViewClickListener(new View.OnClickListener() {
+        loadMoreFooter.setOnErrorViewClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bookAdapter.showLoadMoreView();
+                loadMoreFooter.showLoadMoreView();
                 PageIndex = prevPage;
                 getData();
             }
@@ -127,7 +130,7 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel>{
     public void onSuccess(BookModel bookModel) {
         niceRecyclerView.showRecyclerView();
         if (bookModel.Return.List.isEmpty()) {
-            bookAdapter.showNoMoreView();
+            loadMoreFooter.showNoMoreView();
         }
         else
         {
@@ -146,7 +149,7 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel>{
         if (bookAdapter.isDataEmpty()) {
             niceRecyclerView.showErrorView();
         } else {
-            bookAdapter.showErrorView();
+            loadMoreFooter.showErrorView();
         }
     }
 }

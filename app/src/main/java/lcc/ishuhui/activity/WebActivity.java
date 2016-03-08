@@ -25,9 +25,10 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.lcc.state_refresh_recyclerview.StateLayout;
+
 import butterknife.Bind;
 import lcc.ishuhui.R;
-import lcc.ishuhui.customview.StateLayout;
 
 public class WebActivity extends BaseActivity {
 
@@ -36,6 +37,7 @@ public class WebActivity extends BaseActivity {
 
     String mUrl, title;
 
+    @Bind(R.id.webView)
     WebView webView;
 
     @Bind(R.id.stateLayout)
@@ -50,15 +52,6 @@ public class WebActivity extends BaseActivity {
 
         final DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-
-
-        webView = new WebView(this);
-        webView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-        stateLayout.addContentView(webView);
-
-
-
         stateLayout.setErrorAction("重试", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
