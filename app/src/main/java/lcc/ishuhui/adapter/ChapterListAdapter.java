@@ -34,7 +34,18 @@ public class ChapterListAdapter extends LoadMoreAdapter<ChapterListModel.ReturnE
             }
         });
     }
-
+    @Override
+    public void onBindHolder(RecyclerView.ViewHolder holder, final int position) {
+        ((ViewHolder) holder).onBindData(data.get(position));
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(position);
+                }
+            });
+        }
+    }
     @Override
     public RecyclerView.ViewHolder onCreateHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_detial_book, parent, false));

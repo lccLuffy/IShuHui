@@ -35,6 +35,18 @@ public class SubscribeAdapter extends LoadMoreAdapter<BookModel.ResultSet.Book> 
         });
     }
 
+    @Override
+    public void onBindHolder(RecyclerView.ViewHolder holder, final int position) {
+        ((ViewHolder) holder).onBindData(data.get(position));
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(position);
+                }
+            });
+        }
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateHolder(ViewGroup parent, int viewType) {

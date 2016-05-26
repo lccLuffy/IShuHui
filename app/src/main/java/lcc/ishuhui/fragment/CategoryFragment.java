@@ -106,15 +106,6 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel> {
                 getData();
             }
         });
-        /*adapter.setOnErrorViewClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadMoreFooter.showLoadMoreView();
-                PageIndex = prevPage;
-                getData();
-            }
-        });*/
-
         getData();
     }
 
@@ -130,6 +121,7 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel> {
 
     @Override
     public void onSuccess(BookModel bookModel) {
+        toast(bookModel.Return.List.size() + "");
         stateLayout.showContentView();
         if (bookModel.Return.List.isEmpty()) {
             adapter.noMoreData();

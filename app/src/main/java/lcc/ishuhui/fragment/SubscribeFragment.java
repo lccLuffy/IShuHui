@@ -51,7 +51,9 @@ public class SubscribeFragment extends BaseFragment {
 
     private void init() {
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        recyclerView.setAdapter(adapter = new SubscribeAdapter(getContext()));
+        adapter = new SubscribeAdapter(getContext());
+        adapter.setFullSpan(true);
+        recyclerView.setAdapter(adapter);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

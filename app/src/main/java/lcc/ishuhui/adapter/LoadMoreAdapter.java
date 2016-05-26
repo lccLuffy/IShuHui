@@ -2,6 +2,7 @@ package lcc.ishuhui.adapter;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -38,8 +39,13 @@ public abstract class LoadMoreAdapter<DataType> extends SimpleAdapter<RecyclerVi
                 else
                     footerViewHolder.show();
             }
-
         }
+    }
+
+    private boolean fullSpan;
+
+    public void setFullSpan(boolean fullSpan) {
+        this.fullSpan = fullSpan;
     }
 
 
@@ -51,10 +57,12 @@ public abstract class LoadMoreAdapter<DataType> extends SimpleAdapter<RecyclerVi
         public AdapterSpanSizeLookup(int span) {
             this.span = span;
         }
+
         private int span;
+
         @Override
         public int getSpanSize(int position) {
-            return span;
+            return position == data.size() ? span : 1;
         }
     }
 
@@ -83,7 +91,15 @@ public abstract class LoadMoreAdapter<DataType> extends SimpleAdapter<RecyclerVi
         super.onCreateViewHolder(parent, viewType);
         if (ITEM_TYPE_FOOTER == viewType) {
             if (footerViewHolder == null) {
-                footerViewHolder = new FooterViewHolder(inflater.inflate(R.layout.item_footer_load_more, parent, false));
+                View footer = inflater.inflate(R.layout.item_footer_load_more, parent, false);
+                if (fullSpan) {
+                    StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.
+                            LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.setFullSpan(true);
+                    footer.setLayoutParams(layoutParams);
+                }
+                footerViewHolder = new FooterViewHolder(footer);
+
                 footerViewHolder.hide();
             }
             return footerViewHolder;

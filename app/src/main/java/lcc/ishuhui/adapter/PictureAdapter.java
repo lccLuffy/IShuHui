@@ -37,6 +37,19 @@ public class PictureAdapter extends LoadMoreAdapter<PictureModel.ResultsEntity> 
 
 
     @Override
+    public void onBindHolder(RecyclerView.ViewHolder holder, final int position) {
+        ((Holder) holder).onBindData(data.get(position));
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(position);
+                }
+            });
+        }
+    }
+
+    @Override
     public RecyclerView.ViewHolder onCreateHolder(ViewGroup parent, int viewType) {
         return new Holder(inflater.inflate(R.layout.item_picture, parent, false));
     }

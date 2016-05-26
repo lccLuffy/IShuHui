@@ -15,7 +15,7 @@ import java.util.List;
  */
 public abstract class SimpleAdapter<Holder extends RecyclerView.ViewHolder, DataType> extends RecyclerView.Adapter<Holder> {
 
-    protected List<DataType> data;
+    protected final List<DataType> data;
     protected LayoutInflater inflater;
     protected OnItemClickListener onItemClickListener;
 

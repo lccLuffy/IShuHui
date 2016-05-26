@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <com.lcc.stateLayout.StateLayout
         android:id="@+id/stateLayout"
         android:layout_width="match_parent"
@@ -20,11 +18,4 @@
                 android:layout_height="match_parent" />
         </android.support.v4.widget.SwipeRefreshLayout>
     </com.lcc.stateLayout.StateLayout>
-
-    <com.lcc.state_refresh_recyclerview.Recycler.StateRecyclerView
-        android:id="@+id/stateRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingEnd="3dp"
-        android:paddingStart="3dp" />
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
