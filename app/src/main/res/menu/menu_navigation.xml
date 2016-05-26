@@ -7,10 +7,10 @@
         <item
             android:id="@+id/action_comic"
             android:title="@string/app_name" />
-        <item
+        <!--<item
             android:id="@+id/action_picture"
             android:icon="@mipmap/ic_picture"
-            android:title="@string/picture" />
+            android:title="@string/picture" />-->
     </group>
 
 </menu>

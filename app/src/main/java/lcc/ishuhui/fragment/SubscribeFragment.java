@@ -3,10 +3,11 @@ package lcc.ishuhui.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
-import com.lcc.state_refresh_recyclerview.Recycler.StateRecyclerView;
+import com.lcc.stateLayout.StateLayout;
 
 import butterknife.Bind;
 import lcc.ishuhui.R;
@@ -23,10 +24,16 @@ import okhttp3.Response;
 
 public class SubscribeFragment extends BaseFragment {
 
-    @Bind(R.id.stateRecyclerView)
-    StateRecyclerView stateRecyclerView;
+    SubscribeAdapter adapter;
 
-    SubscribeAdapter subscribeAdapter;
+    @Bind(R.id.stateLayout)
+    StateLayout stateLayout;
+
+    @Bind(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
+
+    @Bind(R.id.recyclerView)
+    RecyclerView recyclerView;
 
     public static SubscribeFragment newInstance() {
         return new SubscribeFragment();
@@ -43,20 +50,19 @@ public class SubscribeFragment extends BaseFragment {
     }
 
     private void init() {
-        stateRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
-        stateRecyclerView.setAdapter(subscribeAdapter = new SubscribeAdapter(getContext()), true);
-        stateRecyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setAdapter(adapter = new SubscribeAdapter(getContext()));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(subscribeAdapter.isDataEmpty())
-                {
-                    stateRecyclerView.showProgressView();
+                if (adapter.isDataEmpty()) {
+                    stateLayout.showProgressView();
                 }
                 getData();
             }
         });
 
-        subscribeAdapter.getLoadMoreFooter().showNoMoreView();
+        adapter.noMoreData();
     }
 
     @Override
@@ -65,22 +71,19 @@ public class SubscribeFragment extends BaseFragment {
     }
 
     private void getData() {
-        if (User.getInstance().isLogin())
-        {
+        if (User.getInstance().isLogin()) {
             HttpUtil.post()
-                    .addHeader(User.COOKIE_KEY,User.getInstance().getCookie())
+                    .addHeader(User.COOKIE_KEY, User.getInstance().getCookie())
                     .url(API.GET_SUBSCRIBE_BOOK)
                     .build()
                     .execute(new HttpCallBack<BookModel>() {
                         @Override
                         public void onFailure(Call call, Exception e) {
-                            if (subscribeAdapter.isDataEmpty())
-                            {
-                                stateRecyclerView.showErrorView();
+                            if (adapter.isDataEmpty()) {
+                                stateLayout.showErrorView();
                                 toast(e.toString());
-                            } else
-                            {
-                                subscribeAdapter.getLoadMoreFooter().showErrorView();
+                            } else {
+                                adapter.noMoreData("加载出错...");
                             }
                         }
 
@@ -91,28 +94,23 @@ public class SubscribeFragment extends BaseFragment {
 
                         @Override
                         public void onSuccess(Call call, BookModel result) {
-                            stateRecyclerView.showRecyclerView();
-                            if (result.Return.List.isEmpty())
-                            {
-                                stateRecyclerView.showEmptyView("您啥也没订阅");
+                            stateLayout.showContentView();
+                            if (result.Return.List.isEmpty()) {
+                                stateLayout.showEmptyView("您啥也没订阅");
+                            } else {
+                                adapter.setData(result.Return.List);
                             }
-                            else
-                            {
-                                subscribeAdapter.initData(result.Return.List);
-                            }
-                            stateRecyclerView.setRefreshing(false);
+                            swipeRefreshLayout.setRefreshing(false);
                         }
                     });
-        }
-        else
-        {
+        } else {
 
-            stateRecyclerView.showEmptyView("您还没有登录");
-            stateRecyclerView.setEmptyAction("登录", new View.OnClickListener() {
+            stateLayout.showEmptyView("您还没有登录");
+            stateLayout.setEmptyAction(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     toast("您还没有登录");
-                    getActivity().startActivity(new Intent(getActivity(),LoginActivity.class));
+                    getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
                 }
             });
         }

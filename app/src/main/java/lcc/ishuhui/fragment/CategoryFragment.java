@@ -3,20 +3,20 @@ package lcc.ishuhui.fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.View;
+import android.support.v7.widget.RecyclerView;
 
-import com.lcc.state_refresh_recyclerview.Recycler.LoadMoreFooter;
-import com.lcc.state_refresh_recyclerview.Recycler.StateRecyclerView;
+import com.lcc.stateLayout.StateLayout;
 
 import butterknife.Bind;
 import lcc.ishuhui.R;
 import lcc.ishuhui.adapter.BookAdapter;
+import lcc.ishuhui.adapter.LoadMoreAdapter;
 import lcc.ishuhui.fragment.IView.IView;
 import lcc.ishuhui.fragment.presenter.CategoryPresenter;
 import lcc.ishuhui.model.BookModel;
 import okhttp3.Call;
 
-public class CategoryFragment extends BaseFragment implements IView<BookModel>{
+public class CategoryFragment extends BaseFragment implements IView<BookModel> {
     private static final String CLASSIFY_ID = "CLASSIFY_ID";
 
     //ClassifyId   分类标识，0热血，1国产，2同人，3鼠绘
@@ -26,23 +26,27 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel>{
     public static final String CLASSIFY_ID_MOUSE = "3";
     private String classifyId;
 
-    @Bind(R.id.stateRecyclerView)
-    StateRecyclerView niceRecyclerView;
+    @Bind(R.id.stateLayout)
+    StateLayout stateLayout;
+
+    @Bind(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
+
+    @Bind(R.id.recyclerView)
+    RecyclerView recyclerView;
 
     CategoryPresenter presenter;
 
-    LoadMoreFooter loadMoreFooter;
 
-    BookAdapter bookAdapter;
+    BookAdapter adapter;
 
-    private int PageIndex = 0,prevPage;
+    private int PageIndex = 0, prevPage;
 
     public static CategoryFragment newInstance(String classifyId) {
         CategoryFragment fragment = new CategoryFragment();
         String title = "热血";
         Bundle args = new Bundle();
-        switch (classifyId)
-        {
+        switch (classifyId) {
             case CLASSIFY_ID_HOT:
                 title = "热血";
                 break;
@@ -79,24 +83,22 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel>{
 
     private void init() {
         presenter = new CategoryPresenter(this);
-        niceRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        niceRecyclerView.setAdapter(bookAdapter = new BookAdapter(getContext()), true);
-        loadMoreFooter = bookAdapter.getLoadMoreFooter();
-        niceRecyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter = new BookAdapter(getContext()));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadMoreFooter.showLoadMoreView();
+                adapter.noMoreData();
                 prevPage = PageIndex;
                 PageIndex = 0;
-                if(bookAdapter.isDataEmpty())
-                {
-                    niceRecyclerView.showProgressView();
+                if (adapter.isDataEmpty()) {
+                    stateLayout.showProgressView();
                 }
                 getData();
             }
         });
 
-        loadMoreFooter.setOnLoadMoreListener(new LoadMoreFooter.OnLoadMoreListener() {
+        adapter.setLoadMoreListener(new LoadMoreAdapter.LoadMoreListener() {
             @Override
             public void onLoadMore() {
                 prevPage = PageIndex;
@@ -104,21 +106,21 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel>{
                 getData();
             }
         });
-        loadMoreFooter.setOnErrorViewClickListener(new View.OnClickListener() {
+        /*adapter.setOnErrorViewClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadMoreFooter.showLoadMoreView();
                 PageIndex = prevPage;
                 getData();
             }
-        });
+        });*/
 
         getData();
     }
 
 
     private void getData() {
-        presenter.getData(classifyId,PageIndex);
+        presenter.getData(classifyId, PageIndex);
     }
 
     @Override
@@ -128,28 +130,25 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel>{
 
     @Override
     public void onSuccess(BookModel bookModel) {
-        niceRecyclerView.showRecyclerView();
+        stateLayout.showContentView();
         if (bookModel.Return.List.isEmpty()) {
-            loadMoreFooter.showNoMoreView();
-        }
-        else
-        {
-            if (PageIndex == 0)
-            {
-                bookAdapter.initData(bookModel.Return.List);
+            adapter.noMoreData();
+        } else {
+            if (PageIndex == 0) {
+                adapter.setData(bookModel.Return.List);
             } else {
-                bookAdapter.addData(bookModel.Return.List);
+                adapter.addData(bookModel.Return.List);
             }
         }
-        niceRecyclerView.setRefreshing(false);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onFailure(Call call, Exception e) {
-        if (bookAdapter.isDataEmpty()) {
-            niceRecyclerView.showErrorView();
+        if (adapter.isDataEmpty()) {
+            stateLayout.showErrorView();
         } else {
-            loadMoreFooter.showErrorView();
+            adapter.noMoreData("加载出错");
         }
     }
 }

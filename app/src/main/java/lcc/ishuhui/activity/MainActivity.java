@@ -134,9 +134,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_picture:
+            /*case R.id.action_picture:
                 startActivity(new Intent(this,PicturesActivity.class));
-                break;
+                break;*/
         }
         item.setChecked(true);
         drawerLayout.closeDrawer(GravityCompat.START);

@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.lcc.state_refresh_recyclerview.StateLayout;
+import com.lcc.stateLayout.StateLayout;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -22,6 +22,7 @@ import lcc.ishuhui.R;
 public class Test extends AppCompatActivity {
     @Bind(R.id.stateLayout)
     StateLayout stateLayout;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

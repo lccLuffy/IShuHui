@@ -8,8 +8,21 @@
     tools:context=".activity.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <com.lcc.state_refresh_recyclerview.Recycler.StateRecyclerView
-        android:id="@+id/stateRecyclerView"
+    <com.lcc.stateLayout.StateLayout
+        android:id="@+id/stateLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </com.lcc.stateLayout.StateLayout>
 </RelativeLayout>

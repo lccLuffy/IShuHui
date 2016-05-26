@@ -2,13 +2,14 @@ package lcc.ishuhui.activity;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
-import com.lcc.state_refresh_recyclerview.Recycler.LoadMoreFooter;
-import com.lcc.state_refresh_recyclerview.Recycler.StateRecyclerView;
+import com.lcc.stateLayout.StateLayout;
 
 import butterknife.Bind;
 import lcc.ishuhui.R;
+import lcc.ishuhui.adapter.LoadMoreAdapter;
 import lcc.ishuhui.adapter.PictureAdapter;
 import lcc.ishuhui.constants.Gank;
 import lcc.ishuhui.http.HttpUtil;
@@ -20,12 +21,17 @@ import okhttp3.Response;
 
 public class PicturesActivity extends BaseActivity {
 
-    @Bind(R.id.stateRecyclerView)
-    StateRecyclerView stateRecyclerView;
+    @Bind(R.id.stateLayout)
+    StateLayout stateLayout;
 
-    PictureAdapter pictureAdapter;
+    @Bind(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
-    LoadMoreFooter loadMoreFooter;
+    @Bind(R.id.recyclerView)
+    RecyclerView recyclerView;
+
+    PictureAdapter adapter;
+
     private int page = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +47,7 @@ public class PicturesActivity extends BaseActivity {
                 .execute(new HttpCallBack<PictureModel>() {
                     @Override
                     public void onFailure(Call call, Exception e) {
-                        loadMoreFooter.showErrorView();
+                        adapter.noMoreData(e.toString());
                     }
 
                     @Override
@@ -55,42 +61,41 @@ public class PicturesActivity extends BaseActivity {
                         {
                             if(page == 1)
                             {
-                                pictureAdapter.initData(result.results);
+                                adapter.setData(result.results);
                             }
                             else
                             {
-                                pictureAdapter.addData(result.results);
+                                adapter.addData(result.results);
                             }
                         }
                         else
                         {
-                            loadMoreFooter.showNoMoreView();
-                            if(pictureAdapter.isDataEmpty())
+                            adapter.noMoreData();
+                            if(adapter.isDataEmpty())
                             {
-                                stateRecyclerView.showEmptyView();
+                                stateLayout.showEmptyView();
                             }
                         }
-                        stateRecyclerView.setRefreshing(false);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
     }
 
     private void init() {
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-        stateRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
 
-        stateRecyclerView.setAdapter(pictureAdapter = new PictureAdapter(this),true);
-        loadMoreFooter = pictureAdapter.getLoadMoreFooter();
-        stateRecyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerView.setAdapter(adapter = new PictureAdapter(this));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 page = 1;
-                loadMoreFooter.showLoadMoreView();
+                adapter.canLoadMore();
                 getData();
             }
         });
 
-        loadMoreFooter.setOnLoadMoreListener(new LoadMoreFooter.OnLoadMoreListener() {
+        adapter.setLoadMoreListener(new LoadMoreAdapter.LoadMoreListener() {
             @Override
             public void onLoadMore() {
                 page++;

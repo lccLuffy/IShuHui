@@ -2,14 +2,13 @@ package lcc.ishuhui.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.lcc.state_refresh_recyclerview.Recycler.NiceAdapter;
-import com.lcc.state_refresh_recyclerview.Recycler.NiceViewHolder;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -22,11 +21,10 @@ import lcc.ishuhui.utils.PreferencesUtil;
 /**
  * Created by lcc_luffy on 2016/1/23.
  */
-public class SubscribeAdapter extends NiceAdapter<BookModel.ResultSet.Book> {
+public class SubscribeAdapter extends LoadMoreAdapter<BookModel.ResultSet.Book> {
 
     public SubscribeAdapter(final Context context) {
-        super(context);
-        setOnItemClickListener(new OnItemClickListener() {
+        setOnItemClickListener(new SimpleAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 Intent intent = new Intent(context, ChapterListActivity.class);
@@ -37,12 +35,13 @@ public class SubscribeAdapter extends NiceAdapter<BookModel.ResultSet.Book> {
         });
     }
 
+
     @Override
-    protected NiceViewHolder onCreateNiceViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_subscribe, parent, false));
     }
 
-    public class ViewHolder extends NiceViewHolder<BookModel.ResultSet.Book> {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.tv_item_title)
         TextView tv_item_title;
 
@@ -66,14 +65,13 @@ public class SubscribeAdapter extends NiceAdapter<BookModel.ResultSet.Book> {
             ButterKnife.bind(this, view);
         }
 
-        @Override
         public void onBindData(BookModel.ResultSet.Book data) {
             title_LastChapter.setText(data.LastChapter.Title);
             tv_item_explain.setText(data.Explain);
             tv_item_time.setText(data.LastChapter.RefreshTimeStr);
             tv_item_title.setText(data.Title + " " + data.LastChapter.ChapterNo + "话");
             tv_item_author.setText(data.Author);
-            Glide.with(context)
+            Glide.with(itemView.getContext())
                     .load(data.LastChapter.FrontCover)
                     .centerCrop()
                     .placeholder(R.color.gray)

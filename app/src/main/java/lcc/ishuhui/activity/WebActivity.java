@@ -22,7 +22,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.lcc.state_refresh_recyclerview.StateLayout;
+import com.lcc.stateLayout.StateLayout;
 
 import butterknife.Bind;
 import lcc.ishuhui.R;
@@ -48,7 +48,7 @@ public class WebActivity extends BaseActivity {
         title = getIntent().getStringExtra(TITLE);
 
 
-        stateLayout.setErrorAction("重试", new View.OnClickListener() {
+        stateLayout.setErrorAction(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 webView.reload();
@@ -76,24 +76,24 @@ public class WebActivity extends BaseActivity {
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_web,menu);
+        getMenuInflater().inflate(R.menu.menu_web, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_copy:
                 ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 clipboardManager.setPrimaryClip(ClipData.newPlainText(title, mUrl));
-                toast(title+" 的图片地址已复制");
+                toast(title + " 的图片地址已复制");
                 return true;
             case R.id.action_share_link:
                 Intent i = new Intent();
                 i.setAction(Intent.ACTION_SEND);
-                i.putExtra(Intent.EXTRA_TEXT,mUrl);
+                i.putExtra(Intent.EXTRA_TEXT, mUrl);
                 i.setType("text/plain");
                 startActivity(i);
                 return true;
@@ -121,11 +121,11 @@ public class WebActivity extends BaseActivity {
             super.onReceivedTitle(view, title);
             setTitle(title);
         }
+
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            if(newProgress == 100)
-            {
+            if (newProgress == 100) {
                 stateLayout.showContentView();
             }
         }
@@ -139,6 +139,7 @@ public class WebActivity extends BaseActivity {
                     .show();
             return true;
         }
+
         @Override
         public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
             AlertDialog.Builder builder = new AlertDialog.Builder(WebActivity.this);
@@ -160,8 +161,7 @@ public class WebActivity extends BaseActivity {
         }
     }
 
-    private class ViewClient extends WebViewClient
-    {
+    private class ViewClient extends WebViewClient {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
@@ -192,8 +192,7 @@ public class WebActivity extends BaseActivity {
             errorHappen();
         }
 
-        private void errorHappen()
-        {
+        private void errorHappen() {
             stateLayout.showErrorView();
         }
     }
