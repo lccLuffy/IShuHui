@@ -83,7 +83,7 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
         PreferencesUtil.getInstance().start().put("latest_see_id", Integer.parseInt(id)).put("latest_see_title", title).commit();
     }
 
-    private LoadMoreAdapter<ChapterListModel.ReturnEntity.Chapter> simpleAdapter() {
+    private LoadMoreAdapter<ChapterListModel.ReturnEntity.Chapter> linearAdapter() {
         if (linearChapterListAdapter == null) {
             linearChapterListAdapter = new LinearChapterListAdapter(this);
             linearChapterListAdapter.canLoadMore();
@@ -136,8 +136,9 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
 
     private void init() {
         stateLayout.setInfoContentViewMargin(0, 250, 0, 0);
-        if (PreferencesUtil.getInstance().getInt("adapter_type", ADAPTER_TYPE_GRID) == ADAPTER_TYPE_LINEAR) {
-            currentAdapter = simpleAdapter();
+        simple_mode = PreferencesUtil.getInstance().getInt("adapter_type", ADAPTER_TYPE_GRID) == ADAPTER_TYPE_LINEAR;
+        if (simple_mode) {
+            currentAdapter = linearAdapter();
         } else {
             currentAdapter = gridAdapter();
         }
@@ -229,10 +230,12 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
             case R.id.action_simple_mode:
                 if (!simple_mode) {
                     simple_mode = true;
-                    recyclerView.setAdapter(currentAdapter = simpleAdapter());
+                    recyclerView.setAdapter(currentAdapter = linearAdapter());
+                    PreferencesUtil.getInstance().start().put("adapter_type", ADAPTER_TYPE_LINEAR).commit();
                 } else {
                     simple_mode = false;
                     recyclerView.setAdapter(currentAdapter = gridAdapter());
+                    PreferencesUtil.getInstance().start().put("adapter_type", ADAPTER_TYPE_GRID).commit();
                 }
                 break;
         }
