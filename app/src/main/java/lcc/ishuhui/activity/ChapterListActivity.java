@@ -28,6 +28,7 @@ import lcc.ishuhui.constants.API;
 import lcc.ishuhui.http.HttpUtil;
 import lcc.ishuhui.http.callback.HttpCallBack;
 import lcc.ishuhui.http.callback.StringHttpCallBack;
+import lcc.ishuhui.manager.ChapterListManager;
 import lcc.ishuhui.model.ChapterListModel;
 import lcc.ishuhui.model.User;
 import lcc.ishuhui.utils.JsonUtil;
@@ -156,6 +157,25 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
 
         fab_subscribe.setOnClickListener(this);
         getData();
+
+    }
+
+    private final static int MENU_ID = 89456;
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        String json = PreferencesUtil.getInstance().getString("book" + id, null);
+        if (json != null) {
+            ChapterListModel.ReturnEntity.Chapter chapter
+                    = JsonUtil.getInstance().fromJson(json, ChapterListModel.ReturnEntity.Chapter.class);
+            MenuItem menuItem = menu.findItem(MENU_ID);
+            if (menuItem == null) {
+                menu.add(100, MENU_ID, 100, chapter.Title);
+            } else {
+                menuItem.setTitle(chapter.Title);
+            }
+        }
+        return true;
     }
 
     private void getData() {
@@ -237,6 +257,21 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
                     recyclerView.setAdapter(currentAdapter = gridAdapter());
                     PreferencesUtil.getInstance().start().put("adapter_type", ADAPTER_TYPE_GRID).commit();
                 }
+                break;
+            case MENU_ID:
+                String json = PreferencesUtil.getInstance().getString("book" + id, null);
+                ChapterListModel.ReturnEntity.Chapter chapter
+                        = JsonUtil.getInstance().fromJson(json, ChapterListModel.ReturnEntity.Chapter.class);
+                int ChapterNo = PreferencesUtil.getInstance().getInt("book_chapter_" + chapter.BookId, 0);
+                int position = 0;
+                for (ChapterListModel.ReturnEntity.Chapter findChapter : currentAdapter.getData()) {
+                    if (findChapter.ChapterNo == ChapterNo) {
+                        break;
+                    }
+                    position++;
+                }
+                ChapterListManager.instance().setChapters(currentAdapter.getData(), position);
+                WebActivity.jumpToMe(this, chapter);
                 break;
         }
         return super.onOptionsItemSelected(item);

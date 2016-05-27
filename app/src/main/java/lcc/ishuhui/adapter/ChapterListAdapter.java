@@ -1,7 +1,6 @@
 package lcc.ishuhui.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +14,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import lcc.ishuhui.R;
 import lcc.ishuhui.activity.WebActivity;
-import lcc.ishuhui.constants.API;
 import lcc.ishuhui.manager.ChapterListManager;
 import lcc.ishuhui.model.ChapterListModel;
+import lcc.ishuhui.utils.JsonUtil;
+import lcc.ishuhui.utils.PreferencesUtil;
 
 /**
  * Created by lcc_luffy on 2016/1/23.
@@ -30,14 +30,15 @@ public class ChapterListAdapter extends LoadMoreAdapter<ChapterListModel.ReturnE
             public void onItemClick(int position) {
                 ChapterListModel.ReturnEntity.Chapter chapter = data.get(position);
                 ChapterListManager.instance().setChapters(data, position);
-                Intent intent = new Intent(context, WebActivity.class);
-                intent.putExtra(WebActivity.URL, API.URL_IMG_CHAPTER + chapter.Id);
-                intent.putExtra(WebActivity.TITLE, chapter.Title);
-                intent.putExtra(WebActivity.CHAPTER_NUM, chapter.ChapterNo);
-                context.startActivity(intent);
+                PreferencesUtil.getInstance().start()
+                        .put("book" + chapter.BookId, JsonUtil.getInstance().toJson(chapter))
+                        .put("book_chapter_" + chapter.BookId, chapter.ChapterNo)
+                        .commit();
+                WebActivity.jumpToMe(context, chapter);
             }
         });
     }
+
     @Override
     public void onBindHolder(RecyclerView.ViewHolder holder, final int position) {
         ((ViewHolder) holder).onBindData(data.get(position));
@@ -50,6 +51,7 @@ public class ChapterListAdapter extends LoadMoreAdapter<ChapterListModel.ReturnE
             });
         }
     }
+
     @Override
     public RecyclerView.ViewHolder onCreateHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_detial_book, parent, false));

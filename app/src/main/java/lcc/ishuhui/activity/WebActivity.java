@@ -3,6 +3,7 @@ package lcc.ishuhui.activity;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,12 +31,15 @@ import lcc.ishuhui.R;
 import lcc.ishuhui.constants.API;
 import lcc.ishuhui.manager.ChapterListManager;
 import lcc.ishuhui.model.ChapterListModel;
+import lcc.ishuhui.utils.JsonUtil;
+import lcc.ishuhui.utils.PreferencesUtil;
 
 public class WebActivity extends BaseActivity {
 
     public static final String URL = "URL";
     public static final String TITLE = "TITLE";
     public static final String CHAPTER_NUM = "CHAPTER_NUM";
+    public static final String BOOK_ID = "BOOK_ID";
 
     String mUrl, title;
     int chapterNo;
@@ -126,6 +130,10 @@ public class WebActivity extends BaseActivity {
                     chapterNo = chapter.ChapterNo;
                     setTitle("第" + chapterNo + "章 " + title);
                     webView.loadUrl(mUrl);
+                    PreferencesUtil.getInstance().start()
+                            .put("book" + chapter.BookId, JsonUtil.getInstance().toJson(chapter))
+                            .put("book_chapter_" + chapter.BookId, chapter.ChapterNo)
+                            .commit();
                 } else {
                     toast("没有了");
                 }
@@ -155,13 +163,21 @@ public class WebActivity extends BaseActivity {
         if (webView != null)
             webView.onResume();
     }
-
+    public static void jumpToMe(Context context, ChapterListModel.ReturnEntity.Chapter chapter) {
+        Intent intent = new Intent(context, WebActivity.class);
+        intent.putExtra(WebActivity.URL, API.URL_IMG_CHAPTER + chapter.Id);
+        intent.putExtra(WebActivity.TITLE, chapter.Title);
+        intent.putExtra(WebActivity.CHAPTER_NUM, chapter.ChapterNo);
+        context.startActivity(intent);
+    }
     private class ChromeClient extends WebChromeClient {
         @Override
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
             setTitle(title);
         }
+
+
 
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
