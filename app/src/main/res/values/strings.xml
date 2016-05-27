@@ -25,5 +25,7 @@
     <string name="open_bower">用浏览器打开</string>
     <string name="refresh">刷新</string>
     <string name="picture">图片</string>
+    <string name="simple_mode">简约模式</string>
+    <string name="next_chapter">下一章</string>
 
 </resources>

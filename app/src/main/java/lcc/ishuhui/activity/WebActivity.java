@@ -1,5 +1,6 @@
 package lcc.ishuhui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
@@ -26,13 +27,18 @@ import com.lcc.stateLayout.StateLayout;
 
 import butterknife.Bind;
 import lcc.ishuhui.R;
+import lcc.ishuhui.constants.API;
+import lcc.ishuhui.manager.ChapterListManager;
+import lcc.ishuhui.model.ChapterListModel;
 
 public class WebActivity extends BaseActivity {
 
     public static final String URL = "URL";
     public static final String TITLE = "TITLE";
+    public static final String CHAPTER_NUM = "CHAPTER_NUM";
 
     String mUrl, title;
+    int chapterNo;
 
     @Bind(R.id.webView)
     WebView webView;
@@ -40,13 +46,16 @@ public class WebActivity extends BaseActivity {
     @Bind(R.id.stateLayout)
     StateLayout stateLayout;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mUrl = getIntent().getStringExtra(URL);
         title = getIntent().getStringExtra(TITLE);
+        chapterNo = getIntent().getIntExtra(CHAPTER_NUM, 0);
 
+        setTitle("第" + chapterNo + "章 " + title);
 
         stateLayout.setErrorAction(new View.OnClickListener() {
             @Override
@@ -105,6 +114,20 @@ public class WebActivity extends BaseActivity {
                 return true;
             case R.id.action_refresh:
                 webView.reload();
+                return true;
+            case R.id.action_next_chapter:
+
+                ChapterListModel.ReturnEntity.Chapter chapter = ChapterListManager.instance().nextChapter();
+
+                if (chapter != null) {
+                    mUrl = API.URL_IMG_CHAPTER + chapter.Id;
+                    title = chapter.Title;
+                    setTitle(title);
+                    webView.loadUrl(mUrl);
+                } else {
+                    toast("没有了");
+                }
+
                 return true;
         }
         return super.onOptionsItemSelected(item);

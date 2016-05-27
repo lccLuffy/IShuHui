@@ -111,6 +111,8 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel> {
 
 
     private void getData() {
+        if (adapter.isDataEmpty())
+            stateLayout.showProgressView();
         presenter.getData(classifyId, PageIndex);
     }
 
@@ -121,7 +123,6 @@ public class CategoryFragment extends BaseFragment implements IView<BookModel> {
 
     @Override
     public void onSuccess(BookModel bookModel) {
-        toast(bookModel.Return.List.size() + "");
         stateLayout.showContentView();
         if (bookModel.Return.List.isEmpty()) {
             adapter.noMoreData();

@@ -73,6 +73,10 @@ public class SubscribeFragment extends BaseFragment {
     }
 
     private void getData() {
+
+        if (adapter.isDataEmpty())
+            stateLayout.showProgressView();
+
         if (User.getInstance().isLogin()) {
             HttpUtil.post()
                     .addHeader(User.COOKIE_KEY, User.getInstance().getCookie())

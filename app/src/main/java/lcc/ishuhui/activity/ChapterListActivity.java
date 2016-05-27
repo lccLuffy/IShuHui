@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,9 +17,12 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.lcc.stateLayout.StateLayout;
 
+import java.util.List;
+
 import butterknife.Bind;
 import lcc.ishuhui.R;
 import lcc.ishuhui.adapter.ChapterListAdapter;
+import lcc.ishuhui.adapter.LinearChapterListAdapter;
 import lcc.ishuhui.adapter.LoadMoreAdapter;
 import lcc.ishuhui.constants.API;
 import lcc.ishuhui.http.HttpUtil;
@@ -52,7 +56,7 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
     @Bind(R.id.fab_subscribe)
     FloatingActionButton fab_subscribe;
 
-    ChapterListAdapter adapter;
+    LoadMoreAdapter<ChapterListModel.ReturnEntity.Chapter> adapter;
 
     private int PageIndex = 0;
     private String id, title;
@@ -62,6 +66,7 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        stateLayout.showProgressView();
         id = getIntent().getStringExtra(ID);
         title = getIntent().getStringExtra(TITLE);
         setTitle(title);
@@ -75,6 +80,7 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void init() {
+        stateLayout.setInfoContentViewMargin(0, 250, 0, 0);
         adapter = new ChapterListAdapter(this);
         int spanCount = 2;
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), spanCount);
@@ -105,6 +111,8 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void getData() {
+        if (adapter.isDataEmpty())
+            stateLayout.showProgressView();
 
         HttpUtil.post()
                 .url(API.GET_COMIC_BOOK_DATA)
@@ -115,6 +123,9 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
                     @Override
                     public void onFailure(Call call, Exception e) {
                         swipeRefreshLayout.setRefreshing(false);
+                        if (adapter.isDataEmpty()) {
+                            stateLayout.showErrorView(e.toString());
+                        }
                     }
 
                     @Override
@@ -135,6 +146,11 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
                             }
                         }
                         swipeRefreshLayout.setRefreshing(false);
+                        if (adapter.isDataEmpty()) {
+                            stateLayout.showEmptyView();
+                        } else {
+                            stateLayout.showContentView();
+                        }
                     }
                 });
     }
@@ -163,9 +179,37 @@ public class ChapterListActivity extends BaseActivity implements View.OnClickLis
             case R.id.action_subscribe:
                 subscribe();
                 break;
+            case R.id.action_simple_mode:
+                if (!simple_mode) {
+                    simple_mode = true;
+                    List<ChapterListModel.ReturnEntity.Chapter> chapters = adapter.getData();
+                    adapter = new LinearChapterListAdapter(this);
+
+                    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+                    recyclerView.setAdapter(adapter);
+                    adapter.setData(chapters);
+                } else {
+                    simple_mode = false;
+                    List<ChapterListModel.ReturnEntity.Chapter> chapters = adapter.getData();
+                    adapter = new ChapterListAdapter(this);
+
+                    int spanCount = 2;
+                    final GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), spanCount);
+                    gridLayoutManager.setSpanSizeLookup(adapter.spanSizeLookup(spanCount));
+                    recyclerView.setLayoutManager(gridLayoutManager);
+                    recyclerView.setHasFixedSize(true);
+
+
+                    recyclerView.setAdapter(adapter);
+                    adapter.setData(chapters);
+                }
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    boolean simple_mode = false;
 
     private void subscribe() {
         if (!User.getInstance().isLogin()) {
