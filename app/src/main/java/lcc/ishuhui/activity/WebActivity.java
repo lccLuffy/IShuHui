@@ -91,6 +91,7 @@ public class WebActivity extends BaseActivity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -122,7 +123,8 @@ public class WebActivity extends BaseActivity {
                 if (chapter != null) {
                     mUrl = API.URL_IMG_CHAPTER + chapter.Id;
                     title = chapter.Title;
-                    setTitle(title);
+                    chapterNo = chapter.ChapterNo;
+                    setTitle("第" + chapterNo + "章 " + title);
                     webView.loadUrl(mUrl);
                 } else {
                     toast("没有了");
@@ -136,6 +138,22 @@ public class WebActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (webView != null)
+            webView.destroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (webView != null)
+            webView.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (webView != null)
+            webView.onResume();
     }
 
     private class ChromeClient extends WebChromeClient {
@@ -148,7 +166,7 @@ public class WebActivity extends BaseActivity {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            if (newProgress == 100) {
+            if (newProgress == 100 && stateLayout != null) {
                 stateLayout.showContentView();
             }
         }
@@ -188,13 +206,15 @@ public class WebActivity extends BaseActivity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            stateLayout.showProgressView();
+            if (stateLayout != null)
+                stateLayout.showProgressView();
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            stateLayout.showContentView();
+            if (stateLayout != null)
+                stateLayout.showContentView();
         }
 
         @Override

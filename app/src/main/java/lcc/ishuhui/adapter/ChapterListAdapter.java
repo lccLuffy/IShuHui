@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 import lcc.ishuhui.R;
 import lcc.ishuhui.activity.WebActivity;
 import lcc.ishuhui.constants.API;
+import lcc.ishuhui.manager.ChapterListManager;
 import lcc.ishuhui.model.ChapterListModel;
 
 /**
@@ -27,9 +28,12 @@ public class ChapterListAdapter extends LoadMoreAdapter<ChapterListModel.ReturnE
         setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+                ChapterListModel.ReturnEntity.Chapter chapter = data.get(position);
+                ChapterListManager.instance().setChapters(data, position);
                 Intent intent = new Intent(context, WebActivity.class);
-                intent.putExtra(WebActivity.URL, API.URL_IMG_CHAPTER + data.get(position).Id);
-                intent.putExtra(WebActivity.TITLE, data.get(position).Title);
+                intent.putExtra(WebActivity.URL, API.URL_IMG_CHAPTER + chapter.Id);
+                intent.putExtra(WebActivity.TITLE, chapter.Title);
+                intent.putExtra(WebActivity.CHAPTER_NUM, chapter.ChapterNo);
                 context.startActivity(intent);
             }
         });

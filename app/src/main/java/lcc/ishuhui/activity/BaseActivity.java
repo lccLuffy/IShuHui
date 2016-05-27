@@ -26,7 +26,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         if(toolbar != null)
             setSupportActionBar(toolbar);
-
         if (isDisplayHomeAsUpEnabled() && getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -40,6 +39,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public abstract int getLayoutId();
 
+    /**
+     *
+     */
     private Toast toast;
 
     public void toast(CharSequence msg) {
@@ -59,7 +61,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             finish();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

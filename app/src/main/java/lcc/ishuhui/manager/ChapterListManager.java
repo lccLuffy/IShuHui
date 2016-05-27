@@ -30,8 +30,8 @@ public class ChapterListManager {
     }
 
     public void setChapters(Collection<ChapterListModel.ReturnEntity.Chapter> chapters, int currentIndex) {
-        if (chapters == null)
-            chapters = new ArrayList<>();
+        if (this.chapters == null)
+            this.chapters = new ArrayList<>();
         this.chapters.clear();
         this.chapters.addAll(chapters);
         this.currentIndex = currentIndex;

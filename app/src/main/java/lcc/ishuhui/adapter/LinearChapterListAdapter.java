@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import lcc.ishuhui.R;
@@ -17,7 +15,6 @@ import lcc.ishuhui.activity.WebActivity;
 import lcc.ishuhui.constants.API;
 import lcc.ishuhui.manager.ChapterListManager;
 import lcc.ishuhui.model.ChapterListModel;
-import lcc.ishuhui.utils.L;
 
 /**
  * Created by lcc_luffy on 2016/1/23.
@@ -35,8 +32,6 @@ public class LinearChapterListAdapter extends LoadMoreAdapter<ChapterListModel.R
                 intent.putExtra(WebActivity.TITLE, chapter.Title);
                 intent.putExtra(WebActivity.CHAPTER_NUM, chapter.ChapterNo);
                 context.startActivity(intent);
-                L.i("ChapterListManager:" + ChapterListManager.instance().getChapters().size() + "");
-                L.i(new Gson().toJson(chapter));
             }
         });
     }
